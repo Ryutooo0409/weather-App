@@ -1,0 +1,369 @@
+<!doctype html>
+
+<html class="dark" lang="en">
+    <head>
+        <meta charset="utf-8" />
+        <meta content="width=device-width, initial-scale=1.0" name="viewport" />
+        <title>Weather Dashboard - Madrid</title>
+        <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+        <link
+            href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&amp;display=swap"
+            rel="stylesheet"
+        />
+        <link
+            href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap"
+            rel="stylesheet"
+        />
+        <link
+            href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap"
+            rel="stylesheet"
+        />
+        <script id="tailwind-config">
+            tailwind.config = {
+                darkMode: "class",
+                theme: {
+                    extend: {
+                        colors: {
+                            primary: "#008cff",
+                            "background-light": "#f5f7f8",
+                            "background-dark": "#0f1a23",
+                        },
+                        fontFamily: {
+                            display: ["Inter"],
+                        },
+                        borderRadius: {
+                            DEFAULT: "0.5rem",
+                            lg: "1rem",
+                            xl: "1.5rem",
+                            full: "9999px",
+                        },
+                    },
+                },
+            };
+        </script>
+        <style>
+            body {
+                font-family: "Inter", sans-serif;
+            }
+            .custom-scrollbar::-webkit-scrollbar {
+                width: 4px;
+            }
+            .custom-scrollbar::-webkit-scrollbar-thumb {
+                background: #334155;
+                border-radius: 10px;
+            }
+        </style>
+    </head>
+    <body
+        class="bg-background-light dark:bg-background-dark text-slate-900 dark:text-slate-100 min-h-screen"
+    >
+        <script src="noorog.js"></script>
+        <div class="flex h-screen overflow-hidden">
+            <!-- Left Sidebar -->
+            <aside
+                class="w-20 lg:w-24 flex flex-col items-center py-8 gap-10 bg-slate-100/50 dark:bg-slate-900/40 border-r border-slate-200 dark:border-slate-800"
+            >
+                <div
+                    class="w-12 h-12 bg-primary rounded-xl flex items-center justify-center text-white shadow-lg shadow-primary/20"
+                >
+                    <span class="material-symbols-outlined text-3xl"
+                        >filter_drama</span
+                    >
+                </div>
+                <nav class="flex flex-col gap-6">
+                    <a class="flex flex-col items-center gap-1 group" href="#">
+                        <div
+                            class="w-12 h-12 flex items-center justify-center rounded-xl bg-primary/10 text-primary transition-all"
+                        >
+                            <span
+                                class="material-symbols-outlined text-2xl fill-1"
+                                >sunny</span
+                            >
+                        </div>
+                        <span class="text-[10px] font-semibold text-primary"
+                            >Weather</span
+                        >
+                    </a>
+                    <a class="flex flex-col items-center gap-1 group" href="#">
+                        <div
+                            class="w-12 h-12 flex items-center justify-center rounded-xl hover:bg-slate-200 dark:hover:bg-slate-800 text-slate-500 transition-all"
+                        >
+                            <span class="material-symbols-outlined text-2xl"
+                                >list</span
+                            >
+                        </div>
+                        <span class="text-[10px] font-semibold text-slate-500"
+                            >Cities</span
+                        >
+                    </a>
+                    <a class="flex flex-col items-center gap-1 group" href="#">
+                        <div
+                            class="w-12 h-12 flex items-center justify-center rounded-xl hover:bg-slate-200 dark:hover:bg-slate-800 text-slate-500 transition-all"
+                        >
+                            <span class="material-symbols-outlined text-2xl"
+                                >map</span
+                            >
+                        </div>
+                        <span class="text-[10px] font-semibold text-slate-500"
+                            >Map</span
+                        >
+                    </a>
+                    <a class="flex flex-col items-center gap-1 group" href="#">
+                        <div
+                            class="w-12 h-12 flex items-center justify-center rounded-xl hover:bg-slate-200 dark:hover:bg-slate-800 text-slate-500 transition-all"
+                        >
+                            <span class="material-symbols-outlined text-2xl"
+                                >settings</span
+                            >
+                        </div>
+                        <span class="text-[10px] font-semibold text-slate-500"
+                            >Settings</span
+                        >
+                    </a>
+                </nav>
+            </aside>
+            <!-- Main Content Area -->
+            <main
+                class="flex-1 flex flex-col overflow-y-auto custom-scrollbar p-6 lg:p-10 gap-8"
+            >
+                <!-- Search Header -->
+                <header class="w-full">
+                    <div class="relative max-w-2xl">
+                        <button
+                            type="button"
+                            onclick="fetchData()"
+                            class="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 hover:text-primary transition"
+                        >
+                            <span class="material-symbols-outlined">
+                                search
+                            </span>
+                        </button>
+
+                        <input
+                            id="searchInput"
+                            class="w-full bg-slate-100 dark:bg-slate-900 border-none rounded-xl py-3 pl-12 pr-4 focus:ring-2 focus:ring-primary/50 text-slate-900 dark:text-slate-100"
+                            placeholder="Search for cities"
+                            type="text"
+                        />
+                    </div>
+                </header>
+                <!-- Hero Section -->
+                <section
+                    class="flex flex-col lg:flex-row justify-between items-center bg-slate-100/30 dark:bg-slate-900/20 rounded-xl py-20 px-8 lg:py-23 lg:px-12 relative overflow-hidden"
+                >
+                    <div class="z-10 text-center lg:text-left">
+                        <h1
+                            class="text-5xl lg:text-5xl font-bold mb-2"
+                            id="city"
+                        >
+                            -
+                        </h1>
+                        <p
+                            class="text-slate-500 dark:text-slate-400 text-lg mb-8"
+                            id="description"
+                        >
+                            -
+                        </p>
+                        <div
+                            class="text-7xl lg:text-6xl font-black text-slate-900 dark:text-slate-100"
+                            id="temperture"
+                        >
+                            --°
+                        </div>
+                    </div>
+                    <!-- icon -->
+                    <div
+                        class="mt-8 lg:mt-0 lg:absolute lg:right-12 lg:top-1/2 lg:-translate-y-1/2"
+                    >
+                        <span
+                            class="material-symbols-outlined text-[120px] lg:text-[170px] text-blue-400 drop-shadow-2xl fill-1"
+                            id="todayIcon"
+                        >
+                            -
+                        </span>
+                    </div>
+                </section>
+                <!-- Today's Forecast -->
+                <section>
+                    <div class="flex justify-between items-center mb-4">
+                        <h3
+                            class="text-sm font-bold uppercase tracking-widest text-slate-500"
+                        >
+                            Today's Forecast
+                        </h3>
+                    </div>
+                    <div class="grid grid-cols-3 md:grid-cols-6 gap-4">
+                        <!-- Hourly Item 1 -->
+                        <div
+                            class="bg-slate-100 dark:bg-slate-900 p-4 rounded-xl flex flex-col items-center gap-3 border border-slate-200 dark:border-slate-800 shadow-sm"
+                        >
+                            <p
+                                class="text-xs font-bold text-slate-500 uppercase"
+                                id="first"
+                            >
+                                --:--
+                            </p>
+                            <span
+                                class="material-symbols-outlined text-blue-500 text-3xl"
+                                id="1t"
+                                >-</span
+                            >
+                            <p class="text-xl font-bold" id="1">--°</p>
+                        </div>
+                        <!-- Hourly Item 2 -->
+                        <div
+                            class="bg-slate-100 dark:bg-slate-900 p-4 rounded-xl flex flex-col items-center gap-3 border border-slate-200 dark:border-slate-800 shadow-sm"
+                        >
+                            <span
+                                class="text-xs font-bold text-slate-500 uppercase"
+                                id="second"
+                                >--:--</span
+                            >
+                            <span
+                                class="material-symbols-outlined text-blue-500 text-3xl"
+                                id="2t"
+                                >-</span
+                            >
+                            <span class="text-xl font-bold" id="2">--°</span>
+                        </div>
+                        <!-- Hourly Item 3 -->
+                        <div
+                            class="bg-slate-100 dark:bg-slate-900 p-4 rounded-xl flex flex-col items-center gap-3 border border-slate-200 dark:border-slate-800 shadow-sm"
+                        >
+                            <span
+                                class="text-xs font-bold text-slate-500 uppercase"
+                                id="third"
+                                >--:--</span
+                            >
+                            <span
+                                class="material-symbols-outlined text-blue-500 text-3xl"
+                                id="3t"
+                                >-</span
+                            >
+                            <span class="text-xl font-bold" id="3">--°</span>
+                        </div>
+                        <!-- Hourly Item 4 -->
+                        <div
+                            class="bg-slate-100 dark:bg-slate-900 p-4 rounded-xl flex flex-col items-center gap-3 border border-slate-200 dark:border-slate-800 shadow-sm"
+                        >
+                            <span
+                                class="text-xs font-bold text-slate-500 uppercase"
+                                id="fourth"
+                                >--:--</span
+                            >
+                            <span
+                                class="material-symbols-outlined text-blue-500 text-3xl"
+                                id="4t"
+                                >-</span
+                            >
+                            <span class="text-xl font-bold" id="4">--°</span>
+                        </div>
+                        <!-- Hourly Item 5 -->
+                        <div
+                            class="bg-slate-100 dark:bg-slate-900 p-4 rounded-xl flex flex-col items-center gap-3 border border-slate-200 dark:border-slate-800 shadow-sm"
+                        >
+                            <span
+                                class="text-xs font-bold text-slate-500 uppercase"
+                                id="fifth"
+                                >--:--</span
+                            >
+                            <span
+                                class="material-symbols-outlined text-blue-500 text-3xl"
+                                id="5t"
+                                >-</span
+                            >
+                            <span class="text-xl font-bold" id="5">--°</span>
+                        </div>
+                        <!-- Hourly Item 6 -->
+                        <div
+                            class="bg-slate-100 dark:bg-slate-900 p-4 rounded-xl flex flex-col items-center gap-3 border border-slate-200 dark:border-slate-800 shadow-sm"
+                        >
+                            <span
+                                class="text-xs font-bold text-slate-500 uppercase"
+                                id="sixth"
+                                >--:--</span
+                            >
+                            <span
+                                class="material-symbols-outlined text-blue-500 text-3xl"
+                                id="6t"
+                                >-</span
+                            >
+                            <span class="text-xl font-bold" id="6">--°</span>
+                        </div>
+                    </div>
+                </section>
+                <!-- Air Conditions -->
+                <section
+                    class="bg-slate-100 dark:bg-slate-900 rounded-xl p-6 border border-slate-200 dark:border-slate-800 shadow-sm mb-5"
+                >
+                    <div class="flex justify-between items-center mb-6">
+                        <h3
+                            class="text-sm font-bold uppercase tracking-widest text-slate-500"
+                        >
+                            Air Conditions
+                        </h3>
+                        <!-- <button
+                            class="bg-primary px-4 py-1.5 rounded-full text-xs font-bold text-white hover:bg-primary/90 transition-colors"
+                        >
+                            See more
+                        </button> -->
+                    </div>
+                    <div class="grid grid-cols-2 gap-8">
+                        <!-- Real Feel -->
+                        <div class="flex items-start gap-3">
+                            <span
+                                class="material-symbols-outlined text-slate-500"
+                                >thermostat</span
+                            >
+                            <div>
+                                <p class="text-sm text-slate-500 mb-1">
+                                    Real Feel
+                                </p>
+                                <p class="text-2xl font-bold" id="realFeel">--°</p>
+                            </div>
+                        </div>
+                        <!-- Wind -->
+                        <div class="flex items-start gap-3">
+                            <span
+                                class="material-symbols-outlined text-slate-500"
+                                >air</span
+                            >
+                            <div>
+                                <p class="text-sm text-slate-500 mb-1">Wind</p>
+                                <p class="text-2xl font-bold" id="wind">-- m/s</p>
+                            </div>
+                        </div>
+                        <!-- Rain -->
+                        <div class="flex items-start gap-3">
+                            <span
+                                class="material-symbols-outlined text-slate-500"
+                                >water_drop</span
+                            >
+                            <div>
+                                <p class="text-sm text-slate-500 mb-1">
+                                    Humitidy
+                                </p>
+                                <p class="text-2xl font-bold" id="humidity">--%</p>
+                            </div>
+                        </div>
+                        <!-- UV -->
+                        <div class="flex items-start gap-3">
+                            <span
+                                class="material-symbols-outlined text-slate-500"
+                                >wb_sunny</span
+                            >
+                            <div>
+                                <p class="text-sm text-slate-500 mb-1">
+                                    Pressure
+                                </p>
+                                <p class="text-2xl font-bold" id="pressure">-mBar</p>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+            </main>
+            <!-- Right Sidebar (Forecast) -->
+            
+        </div>
+    </body>
+</html>
