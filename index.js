@@ -30,17 +30,23 @@ function setIcon(data, name, number) {
 
     element.textContent = mapWeatherToIcon(conditionText, isDay);
 }
-input.addEventListener("keypress", function(event) {
-  if (event.key === "Enter") { 
-    event.preventDefault();
-    document.getElementById("search").click();
-  }
+
+document.addEventListener("DOMContentLoaded", function () {
+
+    const input = document.getElementById("searchInput");
+
+    input.addEventListener("keydown", function(event) {
+        if (event.key === "Enter") {
+            fetchData();
+        }
+    });
+
 });
 
 async function fetchData() {
     try {
         const cityName = document.getElementById("searchInput").value;
-
+        
         const API = "14b2e05ad302497b9d482332252706";
         // const cityName = "Tokyo";
         const response = await fetch(`https://api.weatherapi.com/v1/forecast.json?key=${API}&q=${cityName}&days=5`);
@@ -87,13 +93,12 @@ async function fetchData() {
         // set the time for the next 6 hours
         for (let j = 0; j < 6; j++) {   
             setTime(combined, order[j], i + j);
-            // console.log(combined[i + j].time.slice(11, 16));
+            
         }
 
         // set the temperature for the next 6 hours
         for (let k = 0; k < 6; k++) {
             setTempByTime(combined, (k + 1).toString() , i + k);
-            // console.log(combined[i + k].temp_c);
         }
 
         // set the icon for the next 6 hours
@@ -115,7 +120,7 @@ async function fetchData() {
             icon.classList.replace("text-blue-500", "text-yellow-500");
         }
 
-        console.log(data);
+        // console.log(data);
 
 
     } catch (error) {
